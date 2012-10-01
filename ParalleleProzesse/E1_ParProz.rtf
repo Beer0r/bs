@@ -1,0 +1,109 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf340
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww25400\viewh13520\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+
+\f0\fs24 \cf0 Systemaufruf wait().\
+Hinweis: Anwort zu den Fragen gibt man 2 wait (Linux) bzw. man -s2 wait (SVR4)\
+a) Was ist das Resultat des Systemaufrufs wait()?\
+       wait(): on success, returns the process ID of  the  termi\uc0\u8208 \
+       nated child; on error, -1 is returned.\
+\
+b) Welche Bedeutung hat der Funktionsparameter in wait()?\
+	int *status\
+\
+c) Wie mu\'df ich waitpid() aufrufen, damit ich das gleiche Verhalten habe wie bei wait()?\
+	waitpid(-1, &status, 0);\
+\
+d) Wie pr\'fcfe ich beim bzw. nach dem wait()-Aufruf, ob der Kindprozess normal terminierte?\
+       WIFEXITED(status)\
+              returns true if the child terminated normally, that\
+              is, by calling exit(3) or _exit(2), or by returning\
+              from main().\
+\
+e) Wie erhalte ich im Elternprozess den Wert x, den der Kindprozess mit exit(x) als R\'fcckgabewert\
+bereitstellt?\
+...............................................................................................................................................................\
+...............................................................................................................................................................\
+E 1.2\
+Prozessverdoppelung mit fork()\
+Testen Sie die Prozessverdoppelung durch fork() mit dem Beispielsprogramm forktest.c.\
+Der Quellcode kann mit gcc forktest.c -o forktest in die ausf\'fchrbare Datei forktest\
+\'fcbersetzt werden.\
+F\'fcr die Beobachtung der Prozesse ein anderes Fenster \'f6ffnen und vorhandene Prozesse mit ps -la\
+(auch ps -lea verwenden) ermitteln. Prozesstabelle vor, w\'e4hrend des Parallelablaufs und nach Been-\
+digung des ersten Prozesses anschauen (Linux: unter Gnome steht das komfortable Programm "System-\
+monitor" zur Verf\'fcgung). Anschlie\'dfend Programm starten mit forktest (falls dies nicht geht mit\
+./forktest) und Ablauf beobachten (inklusive ps ...).\
+a) Gibt es Zombies? (Eintrag <defunct> bei SVR4 bzw. "z" bei Linux in Prozesstabelle)\
+	simon     3727  3726  0 20:54 pts/4    00:00:00 [forktest] <defunct>\
+\
+b) Entfernen Sie aus dem Programm forktest.c den wait()-Aufruf. Wie steht es nun mit den\
+Zombies?\
+	Es beendet so schnell, dass es keine Zombies mehr gibt, respektive sie sind nicht sichtbar.\
+\
+c) Leben von Ihnen gestartete Prozesse weiter, auch wenn Sie sich vom System abmelden? Frage f\'fcr\
+Vordergrund- und Hintergrundprozesse getrennt beantworten.\
+Hinweis: einen Hintergrundprozess starten Sie, indem Sie auf der Kommandozeile dem Namen der\
+ausf\'fchrbaren Datei ein & hinten anh\'e4ngen (z.B. ./forktest&).\
+	Als Hintergrundprozess bleiben die Prozesse aktiv und sind auch nach einem Logout sichtbar.\
+\
+d) Wie Teilaufgabe c), aber mit Kommandozeilenbefehl nohup ./forktest. Lebt der Prozess nun\
+\'fcber das Abmelden hinaus weiter? Und wie sieht es mit der Konsolenausgabe des Prozesses aus?\
+	Ja der Prozess lebt weiter. Es wird keine Konslenausgabe erstellt.\
+	nohup - run a command immune to hangups, with output to a non-tty\
+\
+E 1.3\
+\
+Prozesse ersetzen bzw. verketten unter Unix (Chaining).\
+a) Ermitteln Sie mit Hilfe der Manual-Page von execl die Unterschiede von:\
+execl, execv, execle, execlp, execvp\
+Beschreiben Sie die Unterschiede nachfolgend:\
+...............................................................................................................................................................\
+...............................................................................................................................................................\
+...............................................................................................................................................................\
+...............................................................................................................................................................\
+...............................................................................................................................................................\
+...............................................................................................................................................................\
+b) Was erbt der neue Prozess vom alten Prozess? (Manual-Page von execve gibt Antwort; execve\
+ist der System Call, der bei allen Varianten von a) verwendet wird.)\
+...............................................................................................................................................................\
+...............................................................................................................................................................\
+E 1.4\
+Prozessverkettung\
+a) Testen Sie das Chaining von Programmen (execl) mit dem Beispiel demoexec.c (s. Anhang).\
+b) Unter welchen Umst\'e4nden k\'f6nnte die Ausgabe "This should not happen!\\n" erscheinen?\
+...............................................................................................................................................................\
+...............................................................................................................................................................\
+c) Wieso wird der Text "Child just died" zweimal ausgegeben, wenn das Programm date nicht\
+gestartet werden kann?\
+...............................................................................................................................................................\
+...............................................................................................................................................................\
+d) Bekommt der mit execl gestartete Prozess eine neue PID?\
+...............................................................................................................................................................\
+...............................................................................................................................................................\
+e) Kann der neuen Prozess weiterlaufen, auch wenn der execl aufrufende Prozess terminiert?\
+Falls ja: welches ist sein Elternprozess?\
+Hinweis: Evtl. Programm ab\'e4ndern, so dass diese Fragen experimentell beantwortet werden k\'f6nnen.\
+...............................................................................................................................................................\
+...............................................................................................................................................................\
+f) Das Programm soll 0 im Normalfall bzw. -1 im Fehlerfall zur\'fcckgeben. Erweitern Sie das Pro-\
+gramm derart, dass m\'f6gliche Fehler behandelt werden. NB: Sie k\'f6nnen den R\'fcckgabewert eines\
+Programms auf der Konsole zur Anzeige bringen, indem Sie nach der Programmbeendigung den\
+Befehl echo $? eingeben.\
+Mit echo $? erhalten Sie stets den R\'fcckgabewert des zuletzt auf der gleichen Konsole ausgef\'fchr-\
+ten Programms. Beispiel ($ f\'fcr Eingabeaufforderung bei Zeilenbeginn):\
+$ demoexec\
+$ echo $?\
+0\
+$\
+E 1.5 Chaining/Prozessverdoppelung\
+     \'c4ndern Sie das Beispiel aus Aufgabe E1.4 derart ab, dass der Kindprozess das Programmbeispiel aus\
+     Aufgabe E1.2 startet (oder etwas nach eigenen Ideen).\
+    Praktische Durchf\'fchrung, Printout (bzw. Datei) des Quellcodes behalten.\
+E 1.6 Drei Parallelprozesse (optional, bei Interesse und Zeit)\
+     Schreiben Sie ein C-Programm, das drei Prozesse erzeugt, die je einen Text ausgeben und sich dann\
+    beenden. Der Elternprozess soll auf das Ende der drei Kindprozesse warten, dann einen Text ausgeben\
+   und sich ebenfalls beenden. Praktische Durchf\'fchrung, Printout (bzw. Datei) des Quellcodes behalten.\
+}
